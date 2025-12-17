@@ -1,0 +1,811 @@
+fig, ax = plt.subplots()
+
+fig = the whole picture (canvas)
+ax = the specific plot area you draw on
+plt.subplots() = creates both at once, ready for plotting.
+
+In Matplotlib, the plot area (sometimes called the axes area) is the rectangular region of a chart where the actual data is drawn — excluding titles, axis labels, legends, and margins.
+----------------------------------------------------------
+import plotly.express as px
+means you are importing Plotly Express — a high-level API for quickly creating interactive charts with minimal code.
+
+In Matplotlib, there is no direct equivalent to plotly.express because Matplotlib is lower-level.
+The closest analogy is importing pyplot:
+
+---------------------------------------------------------------------
+
+df = px.data.tips()
+px.data = a collection of sample datasets.
+tips() = one of those datasets, returned as a DataFrame.
+df = now holds that DataFrame so you can use it for plotting or analysis.
+
+------------------------------------------------------------------
+fmt='o'
+The fmt parameter stands for "format string".
+It controls how the data points themselves (not the error bars) are displayed — specifically:
+
+Marker style (e.g., 'o' for circles, 's' for squares, '^' for triangles)
+Line style (e.g., '-' for solid, '--' for dashed, '' for no line)
+Color (e.g., 'r' for red, 'g' for green, 'b' for blue)
+
+Only markers (circles) will be drawn at each (x, y) point.
+No connecting line will be drawn between points.
+-----------------------------------------------------------------------
+plt.errorbar(x, y, yerr=y_error, fmt='o')
+
+vertical
+Meaning of yerr = y_error
+yerr can be:
+A single scalar → same error size for all points (your case: 0.2 means ±0.2 in the y-direction for every point).
+A list/array → different error sizes for each point.
+A 2D array → asymmetric errors (different upper and lower bounds)
+
+xerr is error size in x direction horizontal
+
+plt.errorbar() is used to plot data points with error bars — small lines showing the uncertainty or variability in the data
+----------------------------------------------------------------
+
+y_errormin =[0.1, 0.5, 0.9,
+             0.1, 0.9]
+y_errormax =[0.2, 0.4, 0.6, 
+             0.4, 0.2]
+
+x_error = 0.5
+y_error =[y_errormin, y_errormax]
+import ipdb
+ipdb.set_trace()
+# plotting graph
+# plt.plot(x, y)
+plt.errorbar(x, y,
+             yerr = y_error,
+             xerr = x_error, 
+             fmt ='o')
+
+-----------------------------------------------
+
+enumerate(zip(x, y)) is a common pattern used when you want to iterate over two (or more) iterables in parallel while also keeping track of the index.
+
+Produces (index, (x_item, y_item)) pairs.
+-------------------------------------------------
+
+xytext=(0, 10)
+How it works
+The xy argument (in your case (xi, yi)) is the point in data coordinates you want to annotate.
+The xytext argument is the position of the text label.
+The meaning of xytext depends on textcoords:
+You set textcoords="offset points", so (0, 10) means:
+0 points horizontally (no left/right shift)
+10 points vertically (shift upward by 10 points)
+1 point = 1/72 of an inch on the figure.
+----------------------------------------------------
+
+plt.figure()
+
+No plt.figure() → Matplotlib automatically creates a default figure when you first plot.
+With plt.figure() → You explicitly create or switch to a specific figure before plotting.
+Multiple Figures → You can manage multiple plots separately:
+---------------------------------------------------------
+
+plt.fill_between(x, y, y1, color='green', alpha=0.5)
+is a Matplotlib command that fills the area between two curves (y and y1) along the same x values.
+
+Parameter breakdown
+x – array-like, the x-coordinates for both curves.
+y – array-like, the first curve's y-values.
+y1 – array-like, the second curve's y-values.
+color='green' – fill color for the area.
+alpha=0.5 – transparency level (0 = fully transparent, 1 = fully opaque).
+-----------------------------------------------------
+plt.xticks([r + barWidth for r in range(len(IT))], ['2015', '2016', '2017', '2018', '2019'])
+plt.xticks(tick_positions, tick_labels)
+
+Putting it together
+Positions: [0.25, 1.25, 2.25, 3.25, 4.25]
+Labels: '2015', '2016', '2017', '2018', '2019'
+This means:
+At x=0.25 → label "2015"
+At x=1.25 → label "2016"
+------------------------------------------------------
+
+plt.scatter(x, y, s=a, c=b, alpha=0.6, edgecolors='w', linewidths=1)
+
+The edgecolors parameter controls the color of the border (outline) around each scatter plot marker.
+
+Details:
+edgecolors='w' → sets the marker outline color to white.
+The outline is drawn around the marker shape (circle, square, etc.).
+The linewidths parameter specifies the thickness of that outline (in points).
+If you set edgecolors='none', no outline will be drawn.
+If linewidths > 0 and edgecolors is not 'none', the marker size will appear slightly larger because the outline is drawn centered on the marker edge.
+---------------------------------------------------
+
+plt.scatter(x, y, marker='^', color='magenta', s=100, alpha=0.7)
+
+the parameter s=100 specifies the marker size in points² (points squared).
+
+Unit: Matplotlib measures marker size in terms of the area of the marker, not its radius or diameter.
+Meaning: s=100 means each marker will have an area of 100 points².
+Effect: Increasing s makes markers larger; decreasing it makes them smaller.
+Example:
+s=20 → small markers
+s=100 → medium markers
+s=300 → large markers
+-------------------------------------------------------
+
+plt.hist(data, bins=30, color='skyblue', edgecolor='black')
+the parameter bins=30 tells Matplotlib to divide the range of your data into 30 equal-width intervals (called bins) and then count how many data points fall into each bin.
+
+Bins = the number of "bars" in the histogram.
+More bins → finer detail (but can look noisy).
+Fewer bins → smoother look (but may hide details).
+Example: If your data ranges from 0 to 300 and bins=30, each bin will cover a width of:
+
+bin width
+=
+300
+−
+0
+30
+=
+10
+bin width= 
+30
+300−0
+​
+ =10
+So:
+
+Bin 1: 0–10
+Bin 2: 10–20
+…
+Bin 30: 290–300
+Matplotlib also allows:
+
+bins='auto' → automatically chooses bin count using a heuristic.
+bins=[0, 50, 100, 200, 300] → custom bin edges.
+--------------------------------------------------------
+
+In Seaborn's sns.histplot, the parameter kde=True means:
+
+Add a Kernel Density Estimate (KDE) curve on top of the histogram.
+------------------------------------------------------
+
+Copy code
+data2 = np.random.normal(loc=3, scale=1, size=1000)
+step-by-step so you understand exactly what it does.
+
+1. np.random.normal
+This is a NumPy function that generates random numbers from a normal (Gaussian) distribution.
+The normal distribution is the famous bell curve shape, where most values are close to the mean, and fewer values are far away.
+2. Parameters
+The function takes three main arguments:
+
+loc=3
+This is the mean (center) of the distribution.
+All generated numbers will be centered around 3.
+Example: If loc=0, the numbers would be centered around zero.
+scale=1
+This is the standard deviation (spread) of the distribution.
+A standard deviation of 1 means most values will fall within:
+mean ± 1 → between 2 and 4 (about 68% of values)
+mean ± 2 → between 1 and 5 (about 95% of values)
+Larger scale → more spread out numbers; smaller scale → numbers closer to the mea
+-----------------------------------------------------------
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12, 4))
+
+Part	Meaning
+plt.subplots()	Creates a figure and subplots
+nrows=1	1 row of plots
+ncols=2	2 columns of plots
+figsize=(12, 4)	Figure size in inches (width, height)
+fig	The whole canvas
+axes	Array of subplot objects
+
++-------------------+-------------------+
+|   Axes[0]         |     Axes[1]       |
+|   (Left Plot)     |   (Right Plot)    |
++-------------------+-------------------+
+1 row 2 columns
+1 figure but 2 axes
+-------------------------------------------------------------
+
+plt.hist([data1, data2], bins=30, stacked=True, color=['cyan', 'purple'], edgecolor='black')
+the parameter stacked=True means:
+
+Instead of plotting two separate histograms side-by-side for data1 and data2,
+Matplotlib stacks the bars on top of each other for each bin.
+The height of each stacked bar equals the sum of counts from both datasets in that bin.
+This is useful when you want to compare contributions of each dataset to the total distribution.
+-------------------------------------------------------
+
+Alright — let’s break down your matplotlib pie chart line step-by-step so you understand exactly what each part does.
+
+Here’s your code:
+
+Python
+
+Copy code
+wedges, texts, autotexts = ax.pie(
+    data,
+    autopct=lambda pct: func(pct, data),
+    explode=explode,
+    labels=cars,
+    shadow=True,
+    colors=colors,
+    startangle=90,
+    wedgeprops=wp,
+    textprops=dict(color="magenta")
+)
+1. Return values
+ax.pie(...) returns three lists:
+
+wedges → The pie slice objects (matplotlib.patches.Wedge) — you can later style or annotate them.
+texts → The label text objects (for labels=cars).
+autotexts → The text objects created by autopct (percentage or custom text inside slices).
+2. Parameters explained
+data
+A list/array of numerical values representing the size of each slice.
+Example: [40, 35, 25] means 40%, 35%, 25% of the pie.
+autopct=lambda pct: func(pct, data)
+autopct controls the text displayed inside each wedge.
+Normally, you can pass a format string like '%1.1f%%'.
+Here, you pass a lambda function:
+Python
+
+Copy code
+lambda pct: func(pct, data)
+pct → The percentage of the wedge.
+func → A custom function you wrote that takes the percentage and the original data to return a string (e.g., "25% (50 cars)").
+explode=explode
+Controls how far each slice is pulled out from the center.
+explode is a list of floats (same length as data).
+Example: [0, 0.1, 0] → second slice is pulled out slightly.
+labels=cars
+Labels for each wedge.
+cars is likely a list of category names (e.g., ["BMW", "Audi", "Tesla"]).
+shadow=True
+Adds a shadow effect under the pie chart for a 3D look.
+colors=colors
+A list of colors for the wedges.
+Example: ["red", "blue", "green"].
+startangle=90
+Rotates the pie chart so that the first wedge starts at 90° (top of the circle).
+wedgeprops=wp
+A dictionary of properties for the wedge shapes.
+Example:
+Python
+
+Copy code
+wp = {'linewidth': 1, 'edgecolor': 'black'}
+This would give each slice a black border.
+textprops=dict(color="magenta")
+Sets properties for all text labels (both labels and autopct text).
+Here, all text will be magenta.
+-----------------------------------------------------------------------
+
+Copy code
+left = np.cumsum(np.append(0, norm.flatten()[:-1])).reshape(data.shape)
+Step-by-step explanation:
+
+1. norm.flatten()
+Purpose: Converts the norm array into a 1D copy of all its elements.
+Example:
+Python
+
+Copy code
+norm = np.array([[1, 2], [3, 4]])
+norm.flatten()  # → array([1, 2, 3, 4])
+2. norm.flatten()[:-1]
+Purpose: Takes all elements except the last one.
+Example:
+Python
+
+Copy code
+norm.flatten()[:-1]  # → array([1, 2, 3])
+3. np.append(0, norm.flatten()[:-1])
+Purpose: Adds a 0 at the beginning of the sequence.
+Example:
+Python
+
+Copy code
+np.append(0, [1, 2, 3])  # → array([0, 1, 2, 3])
+4. np.cumsum(...)
+Purpose: Computes the cumulative sum of the array.
+Example:
+Python
+
+Copy code
+np.cumsum([0, 1, 2, 3])  # → array([0, 1, 3, 6])
+This means each element is the sum of all previous elements (including itself).
+5. .reshape(data.shape)
+Purpose: Reshapes the 1D cumulative sum array back into the same shape as data.
+Example:
+Python
+
+Copy code
+data.shape  # Suppose → (2, 2)
+np.array([0, 1, 3, 6]).reshape((2, 2))
+# → array([[0, 1],
+#          [3, 6]])
+Putting it all together
+If:
+
+Python
+
+Copy code
+norm = np.array([[1, 2],
+                 [3, 4]])
+data = np.zeros_like(norm)
+Then:
+
+Python
+
+Copy code
+left = np.cumsum(np.append(0, norm.flatten()[:-1])).reshape(data.shape)
+Execution flow:
+
+norm.flatten() → [1, 2, 3, 4]
+[:-1] → [1, 2, 3]
+np.append(0, ...) → [0, 1, 2, 3]
+np.cumsum(...) → [0, 1, 3, 6]
+.reshape((2, 2)) →
+
+Copy code
+[[0, 1],
+ [3, 6]]
+
+ ---------------------------------------------------------------
+
+ Meaning of left[:, 0]
+If left is a 2D array-like object (NumPy array, Pandas DataFrame .values, list of lists, etc.):
+
+: in the first position → select all rows.
+0 in the second position → select the first column (index 0).
+
+---------------------------------------------------------------
+
+a = [a1, a2, a3]
+b = [b1, b2]
+np.outer(a, b) =
+[
+  [a1*b1, a1*b2],
+  [a2*b1, a2*b2],
+  [a3*b1, a3*b2]
+]
+------------------------------------
+
+import numpy as np
+
+# Create 10 evenly spaced values from -1 to 5 for x and y
+x = np.linspace(-1, 5, 10)  # shape: (10,)
+y = np.linspace(-1, 5, 10)  # shape: (10,)
+
+# Create coordinate matrices from coordinate vectors
+X, Y = np.meshgrid(x, y)
+
+print("x:", x)
+print("y:", y)
+print("X shape:", X.shape)
+print("Y shape:", Y.shape)
+
+np.linspace(start, stop, num) → creates evenly spaced numbers.
+np.meshgrid(x, y) → turns the 1D arrays into 2D coordinate grids:
+X contains copies of x repeated along rows.
+Y contains copies of y repeated along columns.
+
+-----------------------------------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.tri import Triangulation
+
+# Example grid
+x = np.linspace(0, 2*np.pi, 5)
+y = np.linspace(0, 2*np.pi, 5)
+X, Y = np.meshgrid(x, y)
+
+# Flatten the coordinate arrays
+tri = Triangulation(X.ravel(), Y.ravel())
+
+import ipdb
+ipdb.set_trace()
+
+# Plot the triangulation
+plt.triplot(tri, color='blue')
+plt.scatter(X, Y, color='red')
+plt.show()
+
+tri = Triangulation(X.ravel(), Y.ravel())
+X.ravel() and Y.ravel() flatten the 2D meshgrid into 1D arrays, which Triangulation requires.
+----------------------------------------------------
+
+fig.add_subplot(111)
+The argument 111 is a shorthand for a 3-number code: 
+nrows=1, ncols=1, index=1
+
+First digit 1: number of rows of subplots in the figure.
+
+Second digit 1: number of columns of subplots in the figure.
+
+Third digit 1: which subplot this is (counting left-to-right, top-to-bottom).
+
+So 111 means: “Make a grid of 1 row and 1 column, and select the first (and only) subplot.” If you had fig.add_subplot(2, 2, 3) or fig.add_subplot(223), that would mean: “2 rows, 2 columns, 3rd subplot.
+--------------------------------------------------------------
+
+# Implementation of matplotlib function
+import matplotlib.pyplot as plt
+import numpy as np
+
+# dummy data
+x1 = np.linspace(0.0, 5.0)
+y1 = np.cos(2 * np.pi * x1) * np.exp(-x1)
+
+# creates two subplots
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize = (12, 5)) #1 row and two subplots(2columns)
+# fig, (ax1, ax2) = plt.subplots(2, 2, figsize = (12, 5))
+# fig, (ax1, ax2) = plt.subplots(1, 3, figsize = (12, 5))
+
+# Plot without grid
+ax1.plot(x1, y1)
+ax1.set_title('Plot without grid')
+
+# plot with grid
+ax2.plot(x1, y1)
+ax2.set_title("Plot with grid")
+
+# draw gridlines
+ax2.grid(True)
+
+plt.show()
+-------------------------------------------------
+fig, ax = plt.subplots(2, 2)  # 2x2 grid of subplots
+for axes in ax.flat:
+    axes.legend()
+
+Here, ax is not a single Axes object — it’s a NumPy array of Axes objects (shape (2, 2) in this example).
+Each element in ax is an Axes instance (the object that represents one plot area).
+2️⃣ What is .flat?
+ax.flat is a NumPy iterator that lets you loop over all elements of the array as if it were 1D.
+This is useful because ax might be 2D (or higher-dimensional if you made more complex subplot grids).
+--------------------------------------------------------------
+In Matplotlib, plt.tight_layout() is a convenience function that automatically adjusts the spacing between subplots so that labels, titles, and ticks do not overlap or get cut off.
+-----------------------------------------------------------------------------------
+
+gs = gridspec.GridSpec(2, 3, width_ratios=[1, 2, 1], height_ratios=[2, 1])
+ What is GridSpec?
+matplotlib.gridspec.GridSpec is a class that defines a grid layout for subplots.
+Instead of using plt.subplot() with fixed positions, GridSpec lets you create flexible subplot arrangements with custom row/column sizes.
+
+2️⃣ The arguments
+(2, 3)
+2 → number of rows in the grid.
+3 → number of columns in the grid.
+So, the grid will have 2 rows × 3 columns = 6 cells.
+
+width_ratios=[1, 2, 1]
+This controls relative widths of the columns.
+The list length must match the number of columns (3 here).
+Ratios:
+Column 1 → width = 1 unit
+Column 2 → width = 2 units (twice as wide as col 1)
+Column 3 → width = 1 unit
+If the total figure width is split into 1 + 2 + 1 = 4 parts:
+
+Col 1 = 25% of width
+Col 2 = 50% of width
+Col 3 = 25% of width
+height_ratios=[2, 1]
+This controls relative heights of the rows.
+The list length must match the number of rows (2 here).
+Ratios:
+Row 1 → height = 2 units (taller)
+Row 2 → height = 1 unit
+If the total figure height is split into 2 + 1 = 3 parts:
+
+Row 1 = 66.6% of height
+Row 2 = 33.3% of height
+----------------------------------------------------------------
+
+In Python, the with statement and plt.style.context('dark_background') work together to temporarily apply a style in Matplotlib.
+
+1. What with does
+The with statement is used for context managers.
+A context manager sets something up when entering the block and automatically cleans it up when leaving the block — even if an error occurs.
+Common examples:
+with open("file.txt") as f: (automatically closes the file)
+with lock: (automatically releases the lock)
+2. What plt.style.context() does
+plt.style.context('dark_background') is a Matplotlib context manager.
+It temporarily changes the plotting style to 'dark_background' only inside the with block.
+When the block ends, the style reverts to the previous one automatically.
+3. Why use them together
+Using:
+
+Python
+
+Copy code
+import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+
+with plt.style.context('dark_background'):
+    plt.plot(x, y)
+    plt.title("Dark Background Plot")
+    plt.show()
+
+# Outside the block, style is back to default
+plt.plot(x, y)
+plt.title("Default Style Plot")
+plt.show()
+Benefits:
+
+No need to manually reset the style.
+Prevents accidental style changes affecting other plots.
+Makes code cleaner and safer.
+✅ In short:
+
+with → runs code inside a temporary "context" and cleans up afterward.
+plt.style.context('dark_background') → temporarily changes Matplotlib’s style.
+Together → you get a temporary style change that automatically resets.
+
+-------------------------------------------------
+
+import numpy as np
+
+# With endpoint=True (default)
+a = np.linspace(0, 1, 5, endpoint=True)
+print(a)  # [0.   0.25 0.5  0.75 1.  ]
+
+# With endpoint=False
+b = np.linspace(0, 1, 5, endpoint=False)
+print(b)  # [0.  0.2 0.4 0.6 0.8]
+
+t = np.linspace(0, 1, 1000, endpoint=True)
+endpoint=True means the last value in the generated array will be exactly equal to the stop value (here, 1).
+If you set endpoint=False, the sequence will exclude the stop value and end just before it.
+-------------------------------------------------
+
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots()
+ax.plot([0, 1, 2, 3, 4], [0, 1, 4, 9, 16])
+
+# Enable minor ticks
+ax.minorticks_on()
+
+# Customize major ticks (red, bigger)
+ax.tick_params(axis='both', which='major', length=10, color='red', labelsize=12)
+# ax.tick_params(axis='both', which='major', length=40, color='red', labelsize=12)
+
+# Customize minor ticks (blue, smaller)
+ax.tick_params(axis='both', which='minor', length=5, color='blue')
+
+plt.show()
+-------------------------------------------------
+
+import matplotlib.pyplot as plt
+
+grade_mapping = {'B': 2, 'B+': 3, 'A': 4}
+student_marks = [50, 60, 70, 80, 90]
+student_grade = ['B', 'B', 'B+', 'B+', 'A']
+numeric_grades = [grade_mapping[grade] for grade in student_grade]
+-------------------------------
+
+import matplotlib.pyplot as plt
+
+plt.plot([1, 2, 3], [4, 5, 6])  # Creates a plot
+ax = plt.gca()                  # Gets the current Axes
+ax.set_facecolor("lightgray")   # Changes background color
+plt.show()
+--------------------------------
+import matplotlib.pyplot as plt
+
+grade_mapping = {"A": 90, "B": 80, "C": 70, "D": 60, "F": 50}
+
+plt.plot([1, 2, 3, 4, 5], [90, 80, 70, 60, 50], marker='o')
+
+plt.yticks(
+    ticks=list(grade_mapping.values()),
+    labels=list(grade_mapping.keys())
+)
+
+plt.show()
+-----------------------------------------------
+
+
+Copy code
+plt.savefig('image.png', bbox_inches='tight', pad_inches=0)
+the 'image.png' is simply the filename (and format) of the file where Matplotlib will save your current figure.
+
+Details:
+'image.png' →
+"image" is the file name.
+.png is the file extension, which tells Matplotlib to save the figure in PNG format.
+You can change it to any valid path and supported format, for example:
+"plot.jpg" → saves as JPEG
+"results/graph.svg" → saves as SVG in a subfolder
+"C:/path/to/figure.pdf" → saves as PDF at a specific location
+About the other arguments:
+bbox_inches='tight' → trims extra whitespace around the figure.
+pad_inches=0 → removes any padding around the figure after trimming.
+✅ So in short: image.png is the output file name where your plot will be saved
+-----------------------------------------------------------
+
+ax.spines['top'].set_visible(False)
+is a Matplotlib command that hides the top spine (the top border line) of a plot.
+
+import matplotlib.pyplot as plt
+
+# Sample data
+x = [1, 2, 3, 4, 5]
+y = [2, 4, 1, 8, 7]
+
+fig, ax = plt.subplots()
+ax.plot(x, y, marker='o')
+
+# Hide top and right spines
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
+
+# Optional: move left and bottom spines outward for style
+ax.spines['left'].set_position(('outward', 5))
+ax.spines['bottom'].set_position(('outward', 5))
+
+plt.show()
+-------------------------------------------
+
+cmap(value) → Returns RGBA color for a normalized value (0–1).
+cmap.N → Number of discrete colors in the colormap.
+cmap.name → Name of the colormap.
+cmap.reversed() → Returns a reversed version of the colormap.
+cmap.resampled(N) → Creates a new colormap with N colors.
+
+-------------------------------
+
+Row stride (rstride)
+Controls how many rows of the grid Matplotlib skips.
+
+Example: rstride=8 means:
+
+Use row 0
+
+Skip rows 1–7
+
+Use row 8
+
+Skip rows 9–15
+
+…and so on.
+
+Column stride (cstride)
+Same idea, but for columns.
+
+cstride=8 means: use every 8th column
+
+col0 col1 col2 col3 col4 col5 col6 col7 col8 col9 ...
+row0
+row1
+row2
+row3
+...
+
+
+cstride = 3
+matplotlib will use
+col0, col3, col6, col9, ...
+----------------------------------------------
+Sure — in Matplotlib 3D contour plots, the offset parameter is simply the coordinate value along the projection axis (zdir) where the contour is drawn.
+
+Think of it like this:
+
+zdir tells Matplotlib which axis to "flatten" the contour onto ('x', 'y', or 'z').
+offset tells it where along that axis to place the flattened contour.
+
+ax.contourf(X, Y, Z, zdir='z', offset=-2)
+
+zdir='z' → project the contour downwards onto a constant z plane.
+offset=-2 → place that projection at z = -2 in the 3D space.
+So instead of floating in the middle of your surface, the contour will be "painted" on a flat plane at z = -2
+-----------------------------------------------
+anim = FuncAnimation(fig, animate, init_func=init, frames=200, interval=20, blit=True)
+
+fig – The matplotlib.figure.Figure object where the animation will be drawn.
+animate – The function called for each frame. It should update the plot and return the updated artists.
+init_func – A function to draw the initial frame (optional but recommended when blit=True).
+frames=200 – Number of frames in the animation (can also be an iterable or generator).
+interval=20 – Delay between frames in milliseconds (20 ms → ~50 FPS).
+blit=True – Only redraw the parts of the plot that have changed (improves performance).
+-------------------------------------------
+
+plt.savefig("image.jpg", facecolor='yellow', bbox_inches="tight", pad_inches=0.3, transparent=True)
+if transparent true then it change background color of whole fig(canvas)
+if transparent false then it change background color of outside plot(axes)
+If you want transparency, use PNG instead of JPG (JPEG doesn’t support transparency).
+bbox_inches="tight" trims extra whitespace around the figure.
+pad_inches controls padding around the figure when using bbox_inches="tight".
+
+-----------------------------------------------
+
+plt.imsave('sample_image.png', img, cmap='gray')
+is a Matplotlib command that saves an image (2D array) to a file.
+Here’s what it does:
+
+'sample_image.png' → Output filename (PNG format here, but can be .jpg, .tiff, etc.).
+img → The NumPy array containing your image data.
+If img is 2D, it’s treated as grayscale.
+If it’s 3D with shape (H, W, 3) or (H, W, 4), it’s treated as RGB/RGBA.
+cmap='gray' → Applies a grayscale colormap (only relevant if img is 2D)->it's make the image color gray
+------------------------------------------------------
+In Python, when you save a Matplotlib figure to an in-memory buffer (instead of a file on disk), you often use io.BytesIO() as the buffer.
+
+The call to buf.seek(0) is important because after writing to the buffer, the file pointer is at the end of the stream.
+If you want to read the data back (e.g., into PIL or OpenCV), you must move the pointer back to the start of the buffer.
+
+--------------------------------------------------------
+
+np.random.seed(42) in Python is used to set the seed for NumPy’s pseudo-random number generator, ensuring that the sequence of random numbers you generate is reproducible every time you run the code.
+
+How it works
+NumPy’s random numbers are deterministic when given the same seed.
+The seed (42 here) is just an integer that initializes the internal state of the random number generator.
+If you use the same seed and the same sequence of random calls, you will get identical results across runs.
+-------------------------------------------------------
+In pandas, iloc[:, 0] is integer-location based indexing that selects all rows (:) from the first column (0 index).
+
+So iloc[:, 1] returns a Series containing all rows from the second column of the DataFrame.
+
+------------------------------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Example data (replace with your own)
+x = np.array([1, 2, 3, 4, 5], dtype=float)
+y = np.array([2, 4, 5, 4, 5], dtype=float)
+
+# Validate that x and y have the same length
+if x.shape != y.shape:
+    raise ValueError("x and y must have the same shape.")
+
+# Perform linear regression: y = m*x + b
+m, b = np.polyfit(x, y, 1)
+
+# Create regression line values
+y_pred = m * x + b
+
+# Plot scatter points
+plt.scatter(x, y, color="blue", label="Data points")
+
+# Plot regression line
+plt.plot(x, y_pred, color="red", linewidth=1, label=f"y = {m:.2f}x + {b:.2f}")
+
+# Labels and legend
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.title("Linear Regression with NumPy polyfit")
+plt.legend()
+plt.grid(True)
+
+# Show plot
+plt.show()
+
+np.polyfit(x, y, 1)
+Fits a polynomial of degree 1 (straight line) to the data, returning slope m and intercept b.
+m * x + b
+Generates predicted y-values for the regression line.
+plt.plot(...)
+Draws the regression line over the scatter plot.
+------------------------------------------------
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=1)
+
+the parameter random_state=1 is a seed for the random number generator used by train_test_split in scikit-learn.
+
+What it does:
+train_test_split randomly shuffles your data before splitting it into training and testing sets.
+The random_state value ensures that this random shuffling is reproducible.
+If you run the code multiple times with the same random_state, you will get exactly the same split every time.
+If you change or omit random_state, the split will be different each run.
+----------------------------------------------------------
+
+
+

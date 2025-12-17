@@ -1,0 +1,207 @@
+https://medium.com/@dev-afzalansari/what-is-a-tensor-shape-dims-rank-and-dtype-explained-fd5f9611c7b3
+----------------------------------
+import tensorflow as tf
+
+array = tf.constant([[0,1,2],[4,5,6],[6,7,8]])
+
+first_row = tf.slice(array, [0, 0], [1, tf.shape(array)[1]])
+print('First Row:\n', first_row)
+# Get the first row
+first_row = tf.slice(t2, [0, 0], [1, tf.shape(t2)[1]])
+print('First Row:\n', first_row)
+
+# Get the second column
+second_column = tf.slice(t2, [0, 1], [tf.shape(t2)[0], 1])
+print('\nSecond Column:\n', second_column)
+
+# Get the second and third columns
+second_third_columns = tf.slice(t2, [0, 1], [tf.shape(t2)[0], 2])
+print('\nSecond & Third Columns:\n', second_third_columns)
+
+input_ → array
+begin → [0, 0]
+Start at row index 0 and column index 0 (top-left corner).
+size → [1, tf.shape(array)[1]]
+1 → Take 1 row.
+tf.shape(array)[1] → Number of columns in array (here, 3).
+So effectively: [1, 3] → Take 1 row and all 3 columns.
+✅ This means: Extract the first row.
+
+using python
+
+# Get the first row
+print('First Row:\n', t2[0])
+
+# Get the second column
+print('\nSecond columns:\n', t2[:, 1])
+
+# Get the second and third columns
+print('\nSecond & Third columns:\n', t2[:, 1:3])
+-----------------------------------------------
+
+Indices = [[0, 0, 0],
+           [1, 1, 1],
+           [1, 0, 3]]
+
+special_picks = tf.gather_nd(t3, indices=Indices, batch_dims=0)
+Since batch_dims=0, TensorFlow interprets each row as:
+
+[0,0,0] → pick t3[0,0,0]
+
+[1,1,1] → pick t3[1,1,1]
+
+[1,0,3] → pick t3[1,0,3]
+
+----------------------------------------------------
+
+If t has shape (a, b):
+
+tf.transpose(t, perm=[1, 0]) → shape becomes (b, a)
+
+This is the classic matrix transpose.
+
+transposed_tensor = tf.transpose(t, perm=[1, 0])
+--------------------------------------------
+result = tf.reshape(t, [-1])
+it make tensor in 1D tensor
+--------------------------------
+import tensorflow as tf
+
+# tensor T1
+T1 =tf. constant([[[10, 11],   #Rank 3 and shape(2,3,2)
+                   [20, 20],
+                   [30, 30]],
+              
+                 [ [40, 41],
+                   [50, 50],
+                   [60, 60]   ]])
+
+# tensor T2
+T2= tf.constant([[1, 2, 3],    # Rank 2 and shape (2,3)
+                 [4, 5, 6]])
+
+#Adding new axis to T2 by .expand_dims() at its trailing end
+broadcasted_T2 = tf.expand_dims(T2, axis=-1)
+print(broadcasted_T2)
+
+# arithmetic operation
+T3=broadcasted_T2+ T1
+print(T3)
+
+Here axis = -1 make the tensor array one column array.
+------------------------------------------------
+import tensorflow as tf
+
+# Define a sparse tensor
+sparse_indices = tf.constant([[0, 2], [1, 0], [1, 2], [2, 1]], dtype=tf.int64)
+sparse_values = tf.constant([1.0, 2.0, 3.0, 4.0], dtype=tf.float32)
+sparse_shape = tf.constant([3, 3], dtype=tf.int64)
+
+sparse_tensor = tf.sparse.SparseTensor(indices=sparse_indices, values=sparse_values, dense_shape=sparse_shape)
+
+# Define a dense matrix
+dense_matrix = tf.constant([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]], dtype=tf.float32)
+
+# Perform sparse-dense matrix multiplication
+result_dense_matrix = tf.sparse.sparse_dense_matmul(sparse_tensor, dense_matrix)
+
+# Print the result
+print(&quot;Sparse Tensor:&quot;)
+print(sparse_tensor)
+
+print(&quot;\nDense Matrix:&quot;)
+print(dense_matrix)
+
+print(&quot;\nResult of Sparse-Dense Matrix Multiplication:&quot;)
+print(result_dense_matrix)
+------------------------------------
+import tensorflow as tf
+
+# Define a simple mathematical function
+def func(x):
+    return x**2 + 5*x + 3
+
+# Define the input variable
+x = tf.Variable(2.0)
+
+# Manual gradient computation
+with tf.GradientTape() as tape:
+    y = func(x)
+
+manual_grad = 2*x + 5
+
+# Automatic differentiation
+with tf.GradientTape() as tape:
+    y = func(x)
+
+auto_grad = tape.gradient(y, x)
+
+print("Manual Gradient:", manual_grad.numpy())
+print("Automatic Gradient:", auto_grad.numpy())
+
+problem in manual_grad
+------------------------------------
+
+import tensorflow as tf
+
+# Define a simple function
+def simple_function(x):
+    return x ** 2
+
+# Define the input variable
+x = tf.constant(3.0)
+
+# Use tf.GradientTape to compute the gradient
+with tf.GradientTape() as tape:
+    # Monitor the input variable
+    tape.watch(x)
+    # Compute the function value
+    y = simple_function(x)
+
+# Compute the gradient
+dy_dx = tape.gradient(y, x)
+
+print("Function value:", y.numpy())
+print("Gradient:", dy_dx.numpy())
+
+In TensorFlow, tape.watch(x) tells the GradientTape to track operations performed on a specific tensor so it can later compute gradients with respect to that tensor. 
+Why you need it
+By default, tf.GradientTape only automatically "watches" trainable variables (created via tf.Variable(..., trainable=True)) because these are the typical targets for optimization in machine learning. 
+In your specific code, x is defined as a tf.constant: 
+Constants are not watched by default to save memory and processing power.
+Without tape.watch(x), the tape would not record the relationship between x and y.
+If you omitted tape.watch(x), calling tape.gradient(y, x) would return None because the tape has no record of x being part of the calculation. 
+---------------------------------------------------
+
+
+@tf.function
+def my_function(x, y):
+    return x * y
+
+@tf.function is a decorator that tells TensorFlow to compile the Python function into a TensorFlow computation graph.
+-------------------------------------------
+tf.profiler.experimental.start('logdir') is a TensorFlow API used to start a performance profiling session so you can analyze how your TensorFlow code runs (CPU, GPU, memory usage, kernel execution times, etc.).
+
+How it works
+Purpose: It begins recording performance data for your TensorFlow program.
+Parameter:
+'logdir' → Path to a directory where profiling data will be saved.
+Later, you can open this data in TensorBoard to visualize it.
+----------------------------------------
+import tensorflow as tf
+
+# Define tensors
+tensor1 = tf.constant([5, 3, 7])  # Binary: 101, 011, 111
+tensor2 = tf.constant([3, 1, 5])  # Binary: 011, 001, 101
+
+# Bitwise XOR operation
+result_xor = tf.bitwise.bitwise_xor(tensor1, tensor2)
+
+# Count number of set bits (1s)
+count_bits = tf.math.count_nonzero(result_xor, axis=-1)
+
+print("Result of Bitwise XOR and Counting Set Bits:")
+print(count_bits.numpy())  # Output: [2, 3, 1]
+
+Since result_xor is 1D, axis=-1 is equivalent to axis=0.
+-----------------------------------------

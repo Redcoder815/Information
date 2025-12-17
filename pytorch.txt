@@ -1,0 +1,16 @@
+slice_tensor = tensor[:2, :]
+is tensor slicing — it extracts a subset of elements from tensor without copying the entire data (view-based operation in most cases).
+
+Breaking it down
+Assume tensor is 2D (like a matrix) with shape (rows, columns):
+
+:2 → row selection
+
+: means "start from the beginning"
+2 means "up to but not including index 2"
+So it selects rows with indices 0 and 1.
+: (second position) → column selection
+
+: alone means "take all columns".
+---------------------------------------------
+ReLU(x)=max(0,x)

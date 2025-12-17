@@ -1,0 +1,1 @@
+slicing python array and tensorflow

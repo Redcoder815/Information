@@ -1,0 +1,253 @@
+round((df.isnull().sum() / df.shape[0]) * 100, 2)
+df.shape[0]
+df.shape[0] is the number of rows in the DataFrame.
+Dividing the missing counts by the number of rows gives the fraction of missing values per column
+------------------------------
+plt.boxplot(df1['Age'], vert=False)
+vert false means box plot will not be vertical.it will be horizontal
+-------------------------
+min max scaling
+
+https://medium.com/@iamkamleshrangi/how-min-max-scaler-works-9fbebb9347da
+----------------------------------------
+
+fig, axes = plt.subplots(len(df.columns), 1, figsize=(7, 14), dpi=95)
+len(df.columns) is number of row of axes
+dpi=95
+Dots Per Inch — controls the resolution of the figure.
+Higher DPI → sharper image (more pixels per inch).
+95 is a moderate resolution, good for on-screen display.
+-----------------------------------
+
+np.percentile(df['Insulin'], [25, 75])
+
+Instead of a single number like 25, you give a list [25, 75].
+
+That tells NumPy: “Give me both the 25th and the 75th percentile at once.”
+----------------------------------
+
+sns.heatmap(corr, annot=True, fmt='.2f', cmap='coolwarm')
+The parameter annot=True means:
+
+Display the numerical values inside each cell of the heatmap.
+-----------------------------------
+print(corr['Outcome'].sort_values(ascending=False))
+
+3. .sort_values(ascending=False)
+This sorts the Series by its values.
+ascending=False means highest correlation first.
+Sorting helps you quickly see which variables are most positively correlated with "Outcome".
+
+Correlation coefficients range from -1.0 to 1.0:
+1.0 → perfect positive correlation
+0.0 → no correlation
+-1.0 → perfect negative correlation
+If you sort descending (ascending=False), you get:
+Highest positive correlations first (close to +1)
+Then smaller positive correlations
+Then negative correlations (close to -1) at the bottom
+
+---------------------------------------
+
+df = df.select_dtypes(include=np.number)
+include = np.number for keeping numeric column only
+
+import pandas as pd
+import numpy as np
+
+# Sample DataFrame
+df = pd.DataFrame({
+    'A': [1, 2, 3],          # int
+    'B': [4.5, 5.5, 6.5],    # float
+    'C': ['x', 'y', 'z']     # string
+})
+
+# Keep only numeric columns
+df = df.select_dtypes(include=np.number)
+
+print(df)
+-------------------------------
+max_abs = np.max(np.abs(df), axis=0)
+
+axis=0 → collapse rows → result is per column.
+axis=1 → collapse columns → result is per row.
+---------------------------------------
+scaled_df = pd.DataFrame(scaled_data, columns=df.columns)
+the columns=df.columns part is telling Pandas to give the new DataFrame the same column names as the original df.
+------------------------------------------------------------
+df_encoded = pd.get_dummies(df, columns=['Color'], prefix='Color')
+When you set prefix='Color', Pandas will prepend "Color_" to each new column name.
+--------------------------------------------
+
+In pandas.cut(), the parameter right controls whether the bins include the right edge of the interval.
+
+Meaning of right=False
+right=True (default) → bins are right-closed: [ )
+Example: (10, 20] means 10 < x ≤ 20
+right=False → bins are left-closed: [ )
+Example: [10, 20) means 10 ≤ x < 20
+----------------------------------------
+
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+from sklearn.feature_extraction.text import CountVectorizer
+
+texts = ["This is a sample sentence.", "Text data preprocessing is important."]
+
+stop_words = set(stopwords.words('english'))
+stemmer = PorterStemmer()
+vectorizer = CountVectorizer()
+
+
+def preprocess_text(text):
+    words = text.split()
+    words = [stemmer.stem(word)
+             for word in words if word.lower() not in stop_words]
+    return " ".join(words)
+
+
+cleaned_texts = [preprocess_text(text) for text in texts]
+
+X = vectorizer.fit_transform(cleaned_texts)
+
+print("Cleaned Texts:", cleaned_texts)
+print("Vectorized Text:", X.toarray())
+----------------------------
+enumerate(iterable, start=0)
+iterable — the sequence you want to loop over.
+start — the index value to begin counting from (default is 0).
+So in your code:
+
+Python
+
+Copy code
+for idx, feature in enumerate(numerical_columns, 1):
+the 1 means:
+
+The counter idx will start at 1 instead of 0
+--------------------------------
+plt.subplot(nrows, ncols, index)
+nrows – number of rows in the subplot grid
+ncols – number of columns in the subplot grid
+index – position of the subplot you want to create (starting at 1, not 0)
+When idx = 1 → first subplot (row 1, col 1)
+When idx = 2 → second subplot (row 1, col 2)
+When idx = 3 → third subplot (row 2, col 1)
+--------------------------------------------
+5. .skew()
+This is a Pandas Series method that calculates the skewness of the data in that column.
+Skewness measures the asymmetry of the data distribution:
+0 → perfectly symmetrical
+Positive → tail on the right
+Negative → tail on the left
+Symmetrical → Skewness close to 0
+Positive Skew → Skewness > 0
+Negative Skew → Skewness < 0
+--------------------------------
+sns.heatmap(df.corr(), annot=True, fmt='.2f', cmap='Pastel2', linewidths=2)
+means each cell in the heatmap will be separated by a 2-point-wide line.
+-----------------------------
+
+df = pd.read_csv("/content/stock_data.csv", parse_dates=True, index_col="Date")
+the argument parse_dates=True tells pandas to try to automatically detect and convert any columns that look like dates into datetime64[ns] objects instead of leaving them as plain strings.
+
+------------------------------------------------------
+plot_acf(df['High'], lags=40)
+the lags parameter tells statsmodels.graphics.tsaplots.plot_acf how many time lags to include in the autocorrelation plot.
+
+Meaning of lags
+Lag = how far back in time you compare the series with itself.
+Lag 1: correlation between today’s value and yesterday’s value.
+Lag 2: correlation between today’s value and the value 2 time steps ago.
+lags=40 means:
+Compute and plot autocorrelations for lags 1 through 40 (plus lag 0, which is always correlation = 1).
+Example
+If your data is daily stock prices in df['High']:
+
+Lag 1: correlation between today’s high and yesterday’s high.
+Lag 40: correlation between today’s high and the high 40 days ago.
+Notes
+You can pass:
+An integer → number of lags to plot.
+A list/array → specific lags to plot (e.g., lags=[1, 5, 10, 20]).
+Choosing lags depends on your data frequency and the patterns you want to detect (seasonality, persistence, etc.).
+✅ In short: lags=40 means “show autocorrelation values for up to 40 time steps back.”
+-------------------------------------
+
+The Augmented Dickey-Fuller (ADF) test is a popular statistical test used to determine if a time series is stationary. In Python, the adfuller() function from the Statsmodels library makes it easy to perform this test.
+
+If p-value < 0.05 → reject 
+H
+0
+H 
+0
+​
+  → series is likely stationary.
+If p-value >= 0.05 → fail to reject 
+H
+0
+H 
+0
+​
+  → series is likely non-stationary.
+
+--------------------------------------
+window_size = 120
+df['high_smoothed'] = df['High'].rolling(window=window_size).mean()
+
+1. window_size = 120
+This sets a variable window_size to the integer 120.
+In the context of rolling calculations, this means we will look at 120 consecutive rows at a time.
+If your data is time-series (e.g., daily prices), 120 could mean 120 days.
+window=120 means:
+For each row, Pandas will look backwards at the current row and the previous 119 rows (total 120 rows).
+At the start of the dataset, where fewer than 120 rows exist, the result will be NaN unless you specify min_periods.
+This does not calculate anything yet — it just prepares the rolling object
+
+---------------------------------------------------
+
+from sklearn.datasets import make_regression
+import numpy as np
+
+# Low noise
+X1, y1 = make_regression(n_samples=5, n_features=1, noise=0.1, random_state=42)
+# High noise
+X2, y2 = make_regression(n_samples=5, n_features=1, noise=50, random_state=42)
+
+print("Low noise y:", np.round(y1, 2))
+print("High noise y:", np.round(y2, 2))
+Low noise → model fits data more accurately, coefficients are closer to the true values.
+High noise → model may shrink more coefficients to zero or misestimate them, because the signal is harder to detect.
+-----------------------------------------------
+How alpha affects the model
+Think of alpha as a knob that controls how much you punish large coefficients:
+
+alpha value	Effect on model	Coefficients	Bias / Variance
+0	No penalty → behaves like normal linear regression	All kept	Low bias, high variance
+Small (e.g., 0.01)	Light penalty	Slightly shrunk	Slight bias, reduced variance
+Medium (e.g., 0.1)	Moderate penalty	Some coefficients become exactly zero	More bias, less variance
+Large (e.g., 10)	Strong penalty	Many coefficients zero → simpler model	High bias, very low variance
+Intuition
+Small alpha → Model fits data closely, but may overfit.
+Large alpha → Model is simpler, may underfit, but generalizes better.
+Right alpha → Balances bias and variance for best predictive performance.
+--------------------------------------
+
+X, y = make_regression(n_samples=100, n_features=5, noise=0.1, random_state=42)
+n_features 5 means 5 columns
+------------------------------------
+
+In Elastic Net regression, the parameter l1_ratio controls the balance between L1 (Lasso) and L2 (Ridge) regularization.
+
+Meaning of l1_ratio
+l1_ratio = 1.0 → Pure Lasso (only L1 penalty: encourages sparsity, can set coefficients exactly to zero).
+l1_ratio = 0.0 → Pure Ridge (only L2 penalty: shrinks coefficients but keeps all features).
+0 < l1_ratio < 1 → Mix of L1 and L2 penalties.
+--------------------------------------
+
+
+
+
+
+

@@ -1,0 +1,5 @@
+Name,Age,City
+Anna,28,Warsaw
+Marek,34,Krakow
+Ola,25,Gdansk
+Piotr,40,Lodz

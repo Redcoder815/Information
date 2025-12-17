@@ -1,0 +1,31 @@
+from sklearn.linear_model import LogisticRegression
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+
+# Load dataset
+X, y = load_iris(return_X_y=True)
+
+# Scale features for faster convergence
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Create and fit logistic regression model
+log_reg = LogisticRegression(max_iter=200, solver='lbfgs', multi_class='auto')
+log_reg.fit(X_scaled, y)
+
+# Check how many iterations were actually used
+print("Number of iterations per class:", log_reg.n_iter_)
+
+log_reg = LogisticRegression(max_iter=200)
+
+the parameter max_iter=200 tells scikit-learn’s LogisticRegression model:
+
+"Allow the solver to perform at most 200 iterations when trying to find the optimal model parameters."
+---------------------------------------------------
+one hot encoding
+https://www.datacamp.com/tutorial/one-hot-encoding-python-tutorial
+------------------------------------------------------
+
+Without random_state: Each time you run the code, the split will be different because the shuffling is random.
+With random_state set to a fixed integer (e.g., 42): The split will be reproducible — you’ll get the same X_train, X_test, y_train, and y_test every time you run the code.
+--------------------------------------------------------

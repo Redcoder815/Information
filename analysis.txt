@@ -1,0 +1,39 @@
+df['high_diff'] = df['High'].diff() -> it's difference between high column previous row - current row then make new column name high_diff.
+
+   High  high_diff
+0   100        NaN   # No previous row, so NaN
+1   102        2.0  # 102 - 100
+2   105        3.0  # 105 - 102
+3   103       -2.0  # 103 - 105
+
+-----------------------------------------------------------------------
+
+window_size = 120
+df['high_smoothed'] = df['High'].rolling(window=window_size).mean()
+What’s happening:
+1. .rolling(window=...)
+rolling() is a Pandas method that creates a rolling view (also called a moving window) over your data.
+It allows you to apply aggregation functions (like .mean(), .sum(), .max(), etc.) over a fixed number of consecutive rows.
+It does not immediately compute results — it returns a special Rolling object, and the calculation happens when you call an aggregation method.
+2. window=window_size
+window specifies how many rows are included in each rolling calculation.
+In your case, window=120 means:
+For each row, Pandas will look at that row and the previous 119 rows in the High column.
+It will then compute the mean of those 120 values.
+The first window_size - 1 rows will be NaN because there aren’t enough previous rows to fill the window.
+
+import pandas as pd
+
+data = {'High': [10, 20, 30, 40, 50]}
+df = pd.DataFrame(data)
+
+df['High_rolling_mean'] = df['High'].rolling(window=3).mean()
+print(df)
+   High  High_rolling_mean
+0    10               NaN   # Not enough data (needs 3 rows)
+1    20               NaN
+2    30              20.0   # Mean of [10, 20, 30]
+3    40              30.0   # Mean of [20, 30, 40]
+4    50              40.0   # Mean of [30, 40, 50]
+
+--------------------------------------------------------------------------------------------
