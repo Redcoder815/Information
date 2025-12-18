@@ -246,8 +246,111 @@ l1_ratio = 0.0 → Pure Ridge (only L2 penalty: shrinks coefficients but keeps a
 0 < l1_ratio < 1 → Mix of L1 and L2 penalties.
 --------------------------------------
 
+In Seaborn's heatmap function, the fmt parameter controls how the annotation text is formatted when annot=True.
 
+Common fmt options in Seaborn (from Matplotlib’s format strings):
+'g' → General format (default, minimal digits, no fixed decimals unless needed)
+'.2f' → Fixed-point with 2 decimal places (e.g., 3.14)
+'.0f' → Fixed-point with no decimals (rounded integer)
+'.2%' → Percentage with 2 decimal places (e.g., 0.45 → 45.00%)
+'d' → Integer format (for integer data only)
+'.3e' → Scientific notation with 3 decimals
+----------------------------------------
+pad=20 → adds 20 points of vertical space between the title and the top of the plot area.
+plt.title('Confusion Matrix', fontsize=17, pad=20)
+----------------------------------------------
 
+plt.gca().xaxis.set_label_position('top') 
+plt.gca() → Gets the current Axes object from Matplotlib.
+.xaxis → Accesses the X-axis object of that Axes.
+.set_label_position('top') → Moves the X-axis label (not the ticks) to the top of the plot.
+------------------------------------------
 
+It moves the x-axis ticks and labels to the top of the plot instead of the default bottom.
+plt.gca().xaxis.tick_top()
+----------------------------------------
+bottom=0.2 means the bottom edge of the plot area starts 20% of the figure height from the bottom of the figure.
+plt.gca().figure.subplots_adjust(bottom=0.2)
+-------------------------------------
 
+import matplotlib.pyplot as plt
 
+fig, ax = plt.subplots()
+
+# Add three texts with different horizontal alignments
+fig.text(0.5, 0.8, 'Left aligned', ha='left', fontsize=12, color='red')
+fig.text(0.5, 0.6, 'Center aligned', ha='center', fontsize=12, color='green')
+fig.text(0.5, 0.4, 'Right aligned', ha='right', fontsize=12, color='blue')
+
+plt.show()
+the parameter ha stands for horizontal alignment of the text.
+
+Possible values for ha in Matplotlib:
+"left" – Aligns the text so that its left edge is at the given (x, y) position.
+"center" – Aligns the text so that its center is at (x, y).
+"right" – Aligns the text so that its right edge is at (x, y).
+----------------------------------
+plt.cm.Blues is a sequential colormap that goes from light to dark blue.
+disp.plot(cmap=plt.cm.Blues)
+it give color to each cell of matrix.
+---------------------------------------
+
+“Give me the F1‑score for each class separately, not a single combined score.”
+So instead of one number, you get an array:
+[F1_for_class_0, F1_for_class_1, F1_for_class_2, ...]
+from sklearn.metrics import f1_score
+
+y_true = [0, 1, 2, 2, 1, 0]
+y_pred = [0, 2, 2, 2, 1, 1]
+f1_per_class = f1_score(y_true, y_pred, average=None)
+print(f1_per_class)
+array([0.666..., 0.5, 0.8])
+What these numbers mean
+Class	F1‑score	Explanation
+0	0.666…	Model is okay at predicting class 0
+1	0.5	Model struggles with class 1
+2	0.8	Model is best at class 2
+---------------------------
+average = macro
+(0.666... + 0.5 + 0.8) / 3 = 0.655...
+Macro treats all classes equally, even if some appear rarely.
+--------------------------------
+X, y = make_classification(n_samples=1000, n_features=20, n_classes=2, random_state=42)
+make_classification is a data generation utility from sklearn.datasets that creates synthetic datasets for classification problems.
+It’s useful for:
+
+Testing algorithms
+Prototyping models
+Learning machine learning concepts without needing real-world data
+The dataset will have 2 target classes (binary classification).
+The target variable y will contain only 0 or 1.
+-------------------------------------------
+
+https://ml-visualized.com/chapter1/linear_regression
+--------------------------------
+
+a) x1.ravel() and x2.ravel()
+.ravel() flattens a NumPy array into 1D (row-major order).
+If x1 is shape (100, 100), x1.ravel() becomes shape (10000,).
+b) np.c_[ ... ]
+np.c_ concatenates arrays column-wise.
+Here, np.c_[x1.ravel(), x2.ravel()] creates a 2D array where:
+First column = flattened x1
+Second column = flattened x2
+Shape becomes (N, 2) — each row is a coordinate (x1_value, x2_value).
+
+x1 = np.array([1, 2, 3])
+x2 = np.array([4, 5, 6])
+print(np.c_[x1, x2])
+# [[1 4]
+#  [2 5]
+#  [3 6]]
+z = regressor.predict(np.c_[x1.ravel(), x2.ravel()]).reshape(x1.shape)
+Then:
+
+x1.ravel() → (10000,)
+x2.ravel() → (10000,)
+np.c_[...] → (10000, 2)
+predict(...) → (10000,)
+.reshape(x1.shape) → (100, 100)
+----------------------------------------------

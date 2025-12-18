@@ -1,0 +1,3 @@
+Auc Roc curve after logistic regression and random forest classifier
+cros validation after svm
+Hyperparameter Tuning after logistic regression and tree
