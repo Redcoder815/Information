@@ -354,3 +354,46 @@ np.c_[...] → (10000, 2)
 predict(...) → (10000,)
 .reshape(x1.shape) → (100, 100)
 ----------------------------------------------
+
+X, y = load_breast_cancer(return_X_y=True)
+return data and target because return_X_y = True
+-------------------------------
+https://ompramod.medium.com/decision-trees-91530198a5a5
+medium
+--------------------------------------------
+X = np.sort(5 * np.random.rand(100, 1), axis=0)
+100 rows and 1 column
+3. np.sort(..., axis=0)
+np.sort sorts the array along the specified axis.
+axis=0 means sort down each column (vertically).
+Since we have only 1 column, it sorts all 100 numbers in ascending order from smallest to largest
+---------------------------------
+X_grid = np.arange(min(X), max(X), 0.01)[:, np.newaxis]
+np.arange(start, stop, step)
+
+Creates a 1D NumPy array starting at start (min(X)), ending before stop (max(X)), with increments of 0.01.
+arr = np.array([1, 2, 3])       # shape (3,)
+arr[:, np.newaxis]              # shape (3, 1)
+# [[1],
+#  [2],
+#  [3]]
+--------------------------------------------
+import numpy as np
+
+X = np.zeros((5, 3))  # 5 rows, 3 columns
+b = np.random.normal(0, 0.1, X.shape[0])
+print(b)
+[ 0.056 -0.034  0.102  0.005 -0.087]
+1. np.random.normal(mean, std_dev, size)
+This function generates random numbers from a normal (Gaussian) distribution.
+
+mean → The center of the distribution.
+Here: 0 → values will be centered around 0.
+
+std_dev → Standard deviation (spread of the distribution).
+Here: 0.1 → most values will be within ±0.1 of the mean.
+
+size → Number of random values to generate.
+Here: X.shape[0] → the number of rows in array X.
+
+------------------------------------------

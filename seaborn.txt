@@ -1,0 +1,4 @@
+sns.boxplot(x="day", y="total_bill", data=tips, hue="smoker")
+
+hue="smoker" → Within each day, the data is further split into two groups: smoker and non-smoker.
+---------------------------------------
