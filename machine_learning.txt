@@ -409,4 +409,78 @@ print(sorted_indices)  # Output: [1 3 0 2]
 2. [:self.k]
 This slices the first k indices from the sorted list.
 If self.k = 3, it takes the indices of the 3 smallest distances.
+----------------------------
+wc_spam = WordCloud(
+    width=500,
+    height=500,
+    min_font_size=10,
+    background_color='white'
+)
 
+WordCloud(...)
+
+This is a constructor from the wordcloud library.
+It creates a new WordCloud object that you can later generate from text data.
+You can customize its appearance and behavior using parameters.
+---------------------------------
+
+import numpy as np
+
+n_samples = 5
+bootstrap_indices = np.random.choice(n_samples, size=n_samples, replace=True)
+print(bootstrap_indices)
+[2 0 4 4 1]
+------------------------
+
+import numpy as np
+
+n_samples = 10
+# Simulate bootstrap sampling with replacement
+bootstrap_indices = np.random.choice(range(n_samples), size=n_samples, replace=True)
+
+# Compute OOB indices
+oob_indices = list(set(range(n_samples)) - set(bootstrap_indices))
+
+print("Bootstrap indices:", bootstrap_indices)
+print("OOB indices:", oob_indices)
+Bootstrap indices: [2 5 1 2 7 0 5 3 1 2]
+OOB indices: [4, 6, 8, 9]
+-------------------------------
+Random forest
+https://medium.com/data-science/random-forest-explained-a-visual-guide-with-code-examples-9f736a6e1b3c
+------------------------------
+
+import numpy as np
+
+X = np.array([[1, 2],
+              [3, 4],
+              [5, 6]])  # 3 samples, 2 features
+weights = np.array([0.5, 1.0])
+bias = 0.1
+
+model_linear = np.dot(X, weights) + bias
+print(model_linear)
+[2.6 5.6 8.6]
+
+Explanation:
+
+Row 1: 1*0.5 + 2*1.0 + 0.1 = 2.6
+Row 2: 3*0.5 + 4*1.0 + 0.1 = 5.6
+Row 3: 5*0.5 + 6*1.0 + 0.1 = 8.6
+---------------------------------------
+
+import numpy as np
+
+def sigmoid(z):
+    z = np.array(z, dtype=np.float64)  # Convert list to NumPy array
+    return 1 / (1 + np.exp(-z))        # Element-wise computation
+
+# Input list
+values = [0, 2, -2, 5]
+result = sigmoid(values)
+
+print("Input:", values)
+print("Sigmoid output:", result)
+Input: [0, 2, -2, 5]
+Sigmoid output: [0.5        0.88079708 0.11920292 0.99330715]
+------------------------------------
