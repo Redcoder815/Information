@@ -484,3 +484,52 @@ print("Sigmoid output:", result)
 Input: [0, 2, -2, 5]
 Sigmoid output: [0.5        0.88079708 0.11920292 0.99330715]
 ------------------------------------
+import numpy as np
+left_idx = np.array([True, False, True])
+right_idx = ~left_idx
+print(right_idx)  # [False  True False]
+
+x = 5        # binary: 000...0101
+y = ~x       # binary: 111...1010  (two's complement)
+print(y)     # -6
+
+import pandas as pd
+df = pd.DataFrame({'A': [1, 2, 3, 4]})
+left_idx = df['A'] > 2       # True for rows where A > 2
+right_idx = ~left_idx        # True for rows where A <= 2
+print(df[left_idx])          # rows with A > 2
+print(df[right_idx])         # rows with A <= 2
+---------------------------------------------
+import numpy as np
+
+y = np.array([1, 2, 2, 3, 3, 3])
+counts = np.bincount(y)
+
+print(counts)  # Output: [0 1 2 3]
+
+Explanation of output:
+
+Index 0 → appears 0 times in y
+Index 1 → appears 1 time
+Index 2 → appears 2 times
+Index 3 → appears 3 times
+-------------------------------------------
+import numpy as np
+
+X0 = np.array([1, 2, 3])
+X1 = np.array([4, 5, 6])
+
+X = np.vstack([X0, X1])
+print(X)
+[[1 2 3]
+ [4 5 6]]
+---------------------------
+
+import numpy as np
+
+y0 = np.array([1, 2, 3])
+y1 = np.array([4, 5, 6])
+
+y = np.concatenate([y0, y1])
+print(y)  # Output: [1 2 3 4 5 6]
+-------------------------------
