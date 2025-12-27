@@ -533,3 +533,86 @@ y1 = np.array([4, 5, 6])
 y = np.concatenate([y0, y1])
 print(y)  # Output: [1 2 3 4 5 6]
 -------------------------------
+X = np.array([[1,2],
+              [3,4],
+              [5,6],
+              [7,8]])
+
+y = np.array([0, 1, 0, 1])
+
+c = 0
+X_c = X[y == c]
+
+[True, False, True, False]
+[[1,2],
+ [5,6]]
+------------------------
+import numpy as np
+
+self_classes = ['cat', 'dog', 'rabbit']
+posteriors = [0.1, 0.8, 0.1]
+
+predicted_class = self_classes[np.argmax(posteriors)]
+print(predicted_class)  # Output: 'dog'
+---------------------
+z = np.clip(z, -500, 500)
+Every value in z less than -500 becomes -500
+
+Every value in z greater than 500 becomes 500
+
+Values already between -500 and 500 stay the same
+
+import numpy as np
+
+z = np.array([-1000, -100, 0, 200, 800])
+z = np.clip(z, -500, 500)
+
+print(z)
+[-500 -100    0  200  500]
+-----------------------
+y = [1, 2, 2, 3, 3, 3]
+np.unique(y, return_counts=True)
+(array([1, 2, 3]), array([1, 2, 3]))
+-------------------
+float('inf') > 1e308   # True
+float('-inf') < -1e308 # True
+-----------------------
+id1 = 101
+id2 = 202
+to_merge = (id1, id2)
+
+print(to_merge)      # (101, 202)
+print(to_merge[0])   # 101
+print(to_merge[1])   # 202
+----------------------------
+
+from sklearn.metrics import confusion_matrix
+
+y_true = [1, 0, 1, 1, 0, 0, 1, 0]
+y_pred = [1, 0, 1, 0, 0, 1, 1, 0]
+
+matrix = confusion_matrix(y_true, y_pred)
+tn, fp, fn, tp = matrix.ravel()
+
+print(f"TN={tn}, FP={fp}, FN={fn}, TP={tp}")
+TN=3, FP=1, FN=1, TP=3
+------------------------------------
+
+import numpy as np
+
+points = np.random.rand(3, 2)  # 3 random points
+print("Original:\n", points)
+
+transform = np.array([[1, 1], [0, 1]])
+result = np.dot(points, transform)
+print("Transformed:\n", result)
+--------------------------
+eigenvalues, eigenvectors = np.linalg.eig(cov)
+eigenvalues[i] is the variance explained by the i‑th principal direction
+
+eigenvectors[:, i] is the direction (vector) of that principal component
+------------------------------
+
+https://www.geeksforgeeks.org/machine-learning/gradient-descent-algorithm-and-its-variants/
+-----------------------------------------------------------
+https://medium.com/@goldengrisha/a-beginners-guide-to-q-learning-understanding-with-a-simple-gridworld-example-2b6736e7e2c9

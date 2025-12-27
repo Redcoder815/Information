@@ -1,89 +1,231 @@
-import numpy as np
-import matplotlib.pyplot as plt
-
 class Node:
-    def __init__(self, feature=None, threshold=None, left=None, right=None, value=None):
-        self.feature = feature      # Feature index to split on
-        self.threshold = threshold  # Value to split at
-        self.left = left            # Left child node
-        self.right = right          # Right child node
-        self.value = value          # Predicted value (for leaf nodes)
+  def __init__(self, key):
+    self.key = key
+    self.left = None
+    self.right = None
+    self.height = 1
 
-class DecisionTreeRegressorScratch:
-    def __init__(self, max_depth=5, min_samples_split=2):
-        self.max_depth = max_depth
-        self.min_samples_split = min_samples_split
-        self.root = None
+class AVLTree:
+  def __init__(self):
+    self.root = None
 
-    def fit(self, X, y):
-        self.root = self._build_tree(X, y)
+  def get_height(self, node):
+    return node.height if node else 0
 
-    def _build_tree(self, X, y, depth=0):
-        n_samples, n_features = X.shape
-        # Stopping criteria
-        if depth >= self.max_depth or n_samples < self.min_samples_split:
-            return Node(value=np.mean(y))
+  def update_height(self, node):
+    return 1 + max(self.get_height(node.left), self.get_height(node.right))
 
-        best_feat, best_thresh = self._best_split(X, y, n_features)
-        if best_feat is None:
-            return Node(value=np.mean(y))
+  def get_balance(self, node):
+    return self.get_height(node.left) - self.get_height(node.right)
 
-        left_idx = X[:, best_feat] <= best_thresh
-        right_idx = ~left_idx
-        
-        left = self._build_tree(X[left_idx], y[left_idx], depth + 1)
-        right = self._build_tree(X[right_idx], y[right_idx], depth + 1)
-        return Node(best_feat, best_thresh, left, right)
+  def rotate_right(self, y):
+    x = y.left
+    T2 = x.right
 
-    def _best_split(self, X, y, n_features):
-        best_mse = float('inf')
-        split_feat, split_thresh = None, None
-        
-        for feat in range(n_features):
-            thresholds = np.unique(X[:, feat])
-            for thresh in thresholds:
-                left_y = y[X[:, feat] <= thresh]
-                right_y = y[X[:, feat] > thresh]
-                
-                if len(left_y) > 0 and len(right_y) > 0:
-                    mse = self._calculate_mse(left_y, right_y)
-                    if mse < best_mse:
-                        best_mse, split_feat, split_thresh = mse, feat, thresh
-        return split_feat, split_thresh
+    x.right = y
+    y.left = T2
 
-    def _calculate_mse(self, left_y, right_y):
-        # Weighted MSE of child nodes
-        n = len(left_y) + len(right_y)
-        mse_l = np.var(left_y) * len(left_y)
-        mse_r = np.var(right_y) * len(right_y)
-        return (mse_l + mse_r) / n
+    self.update_height(y)
+    self.update_height(x)
 
-    def predict(self, X):
-        return np.array([self._traverse_tree(x, self.root) for x in X])
+    return x
 
-    def _traverse_tree(self, x, node):
-        if node.value is not None:
-            return node.value
-        if x[node.feature] <= node.threshold:
-            return self._traverse_tree(x, node.left)
-        return self._traverse_tree(x, node.right)
+  def rotate_left(self, x):
+    y = x.right
+    T2 = y.left
 
-# Generate synthetic data
-X = np.sort(5 * np.random.rand(80, 1), axis=0)
-y = np.sin(X).ravel() + np.random.normal(0, 0.1, X.shape[0])
+    y.left = x
+    x.right = T2
 
-# Train from-scratch model
-model = DecisionTreeRegressorScratch(max_depth=4)
-model.fit(X, y)
-X_test = np.arange(0.0, 5.0, 0.01)[:, np.newaxis]
-y_pred = model.predict(X_test)
+    self.update_height(x)
+    self.update_height(y)
+    return y
 
-# Plotting
-plt.figure(figsize=(10, 6))
-plt.scatter(X, y, s=20, edgecolor="black", c="darkorange", label="data")
-plt.plot(X_test, y_pred, color="cornflowerblue", label="prediction", linewidth=2)
-plt.xlabel("data")
-plt.ylabel("target")
-plt.title("Decision Tree Regression (From Scratch)")
-plt.legend()
-plt.show()
+  def print_data(self):
+    result = []
+    stack = []
+    current = self.root
+    
+    while stack or current:
+      if current:
+        stack.append(current)
+        current = current.left
+      else:
+        current = stack.pop()
+        result.append(current.key)
+        current = current.right
+      
+    return result
+
+  def delete(self, key):
+    stack = []
+    current = self.root
+    while current and current.key != key:
+      stack.append(current)
+      if key < current.key:
+        current = current.left
+      else:
+        current = current.right
+
+    if not current:
+      return self.root
+
+    if current.left and current.right:
+      stack.append(current)
+      successor_parent = current
+      successor = current.right
+      while successor.left:
+        stack.append(successor)
+        successor_parent = successor
+        successor = successor.left
+      current.key = successor.key
+      current = successor
+
+    child = current.left if current.left else  current.right
+    # child = None
+    # if current.left:
+    #   child = current.left
+    # else:
+    #   child = current.right
+    # if not stack:
+    #   self.root = child
+    #   return
+
+    if not stack:
+     self.root = child
+     if self.root:
+        self.root.height = self.update_height(self.root)
+    # rebalance from root
+     self.rebalance([self.root])
+     return
+
+    
+    parent = stack[-1]
+    if parent.left == current:
+     parent.left = child
+    else:
+     parent.right = child
+
+    self.rebalance(stack)
+    
+
+  
+  # def rebalance(self, stack, key):
+  def rebalance(self, stack):
+     for node in stack:
+       node.height = self.update_height(node)
+
+     while stack:
+      node = stack.pop()
+      self.update_height(node)
+      balance = self.get_balance(node)
+
+      # if balance > 1 and key < node.left.key:
+      #   new_root = self.rotate_right(node)
+
+      # elif balance < -1 and key > node.right.key:
+      #   new_root = self.rotate_left(node)
+
+      # elif balance > 1 and key > node.left.key:
+      #   node.left = self.rotate_left(node.left)
+      #   new_root = self.rotate_right(node)
+
+      # elif balance < -1 and key < node.right.key:
+      #   node.right = self.rotate_right(node.right)
+      #   new_root = self.rotate_left(node.left)
+
+      if balance > 1:
+        if self.get_balance(node.left) >= 0:
+          new_root = self.rotate_right(node)
+        else:
+          node.left = self.rotate_left(node.left)
+          new_root = self.rotate_right(node)
+      elif balance < -1:
+        if self.get_balance(node.right) <= 0:
+          new_root = self.rotate_left(node)
+        else:
+          node.right = self.rotate_right(node.right)
+          new_root = self.rotate_left(node)
+
+
+      else:
+        continue
+
+      if stack:
+        parent = stack[-1]
+        if parent.left == node:
+          parent.left = new_root
+        else:
+          parent.right = new_root
+
+      else:
+        self.root = new_root
+
+  def insert(self, key):
+    if not self.root:
+      self.root = Node(key)
+      return
+
+    stack = []
+    current = self.root
+
+    while True:
+      stack.append(current)
+      if key<current.key:
+        if current.left:
+          current = current.left
+        else:
+          current.left = Node(key)
+          stack.append(current.left)
+          break
+
+      else:
+        if current.right:
+          current = current.right
+        else:
+          current.right = Node(key)
+          stack.append(current.right)
+          break
+
+      # self.rebalance(stack, key)
+      self.rebalance(stack)
+    # while stack:
+    #   node = stack.pop()
+    #   self.update_height(node)
+    #   balance = self.get_balance(node)
+
+    #   if balance > 1 and key < node.left.key:
+    #     new_root = self.rotate_right(node)
+
+    #   elif balance < -1 and key > node.right.key:
+    #     new_root = self.rotate_left(node)
+
+    #   elif balance > 1 and key > node.left.key:
+    #     node.left = self.rotate_left(node.left)
+    #     new_root = self.rotate_right(node)
+
+    #   elif balance < -1 and key < node.right.key:
+    #     node.right = self.rotate_right(node.right)
+    #     new_root = self.rotate_left(node.left)
+
+    #   else:
+    #     continue
+
+    #   if stack:
+    #     parent = stack[-1]
+    #     if parent.left == node:
+    #       parent.left = new_root
+    #     else:
+    #       parent.right = new_root
+
+    #   else:
+    #     self.root = new_root
+
+
+
+tree = AVLTree()
+for x in [10, 20, 30, 40, 50, 25]:
+    tree.insert(x)
+
+tree.delete(50)
+print("Inorder:", tree.print_data())
