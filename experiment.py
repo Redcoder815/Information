@@ -1,231 +1,94 @@
-class Node:
-  def __init__(self, key):
-    self.key = key
-    self.left = None
-    self.right = None
-    self.height = 1
+import numpy as np
+import matplotlib.pyplot as plt
 
-class AVLTree:
-  def __init__(self):
-    self.root = None
+class QLearningGridworld:
+    def __init__(self, grid_size=4, n_actions=4, goal_state=15,
+                 learning_rate=0.8, discount_factor=0.95,
+                 exploration_prob=0.2, epochs=1000):
 
-  def get_height(self, node):
-    return node.height if node else 0
+        self.grid_size = grid_size
+        self.n_states = grid_size * grid_size
+        self.n_actions = n_actions
+        self.goal_state = goal_state
 
-  def update_height(self, node):
-    return 1 + max(self.get_height(node.left), self.get_height(node.right))
+        self.lr = learning_rate
+        self.gamma = discount_factor
+        self.epsilon = exploration_prob
+        self.epochs = epochs
 
-  def get_balance(self, node):
-    return self.get_height(node.left) - self.get_height(node.right)
+        self.Q_table = np.zeros((self.n_states, self.n_actions))
+        # print(self.Q_table)
 
-  def rotate_right(self, y):
-    x = y.left
-    T2 = x.right
+    def get_next_state(self, state, action):
+        row, col = divmod(state, self.grid_size)
 
-    x.right = y
-    y.left = T2
+        if action == 0 and col > 0:               # left
+            col -= 1
+        elif action == 1 and col < self.grid_size - 1:  # right
+            col += 1
+        elif action == 2 and row > 0:             # up
+            row -= 1
+        elif action == 3 and row < self.grid_size - 1:  # down
+            row += 1
 
-    self.update_height(y)
-    self.update_height(x)
+        return row * self.grid_size + col
 
-    return x
+    def train(self):
+        for _ in range(self.epochs):
+            current_state = np.random.randint(0, self.n_states)
 
-  def rotate_left(self, x):
-    y = x.right
-    T2 = y.left
+            while True:
+                # Exploration vs exploitation
+                if np.random.rand() < self.epsilon:
+                    action = np.random.randint(0, self.n_actions)
+                else:
+                    action = np.argmax(self.Q_table[current_state])
 
-    y.left = x
-    x.right = T2
+                next_state = self.get_next_state(current_state, action)
 
-    self.update_height(x)
-    self.update_height(y)
-    return y
+                reward = 1 if next_state == self.goal_state else 0
 
-  def print_data(self):
-    result = []
-    stack = []
-    current = self.root
-    
-    while stack or current:
-      if current:
-        stack.append(current)
-        current = current.left
-      else:
-        current = stack.pop()
-        result.append(current.key)
-        current = current.right
-      
-    return result
+                # Q-learning update
+                self.Q_table[current_state, action] += self.lr * (
+                    reward + self.gamma * np.max(self.Q_table[next_state])
+                    - self.Q_table[current_state, action]
+                )
 
-  def delete(self, key):
-    stack = []
-    current = self.root
-    while current and current.key != key:
-      stack.append(current)
-      if key < current.key:
-        current = current.left
-      else:
-        current = current.right
+                if next_state == self.goal_state:
+                    break
 
-    if not current:
-      return self.root
+                current_state = next_state
 
-    if current.left and current.right:
-      stack.append(current)
-      successor_parent = current
-      successor = current.right
-      while successor.left:
-        stack.append(successor)
-        successor_parent = successor
-        successor = successor.left
-      current.key = successor.key
-      current = successor
+    def plot_q_values(self):
+        print(f'q table {self.Q_table}')
+        q_values_grid = np.max(self.Q_table, axis=1).reshape((self.grid_size, self.grid_size))
+        print(q_values_grid)
+        plt.figure(figsize=(6, 6))
+        plt.imshow(q_values_grid, cmap='coolwarm', interpolation='nearest')
+        plt.colorbar(label='Q-value')
+        plt.title('Learned Q-values for Each State')
+        plt.xticks(np.arange(self.grid_size), [str(i) for i in range(self.grid_size)])
+        plt.yticks(np.arange(self.grid_size), [str(i) for i in range(self.grid_size)])
+        plt.gca().invert_yaxis()
+        plt.grid(True)
 
-    child = current.left if current.left else  current.right
-    # child = None
-    # if current.left:
-    #   child = current.left
-    # else:
-    #   child = current.right
-    # if not stack:
-    #   self.root = child
-    #   return
+        for i in range(self.grid_size):
+            for j in range(self.grid_size):
+                plt.text(j, i, f'{q_values_grid[i, j]:.2f}',
+                         ha='center', va='center', color='black')
 
-    if not stack:
-     self.root = child
-     if self.root:
-        self.root.height = self.update_height(self.root)
-    # rebalance from root
-     self.rebalance([self.root])
-     return
+        plt.show()
 
-    
-    parent = stack[-1]
-    if parent.left == current:
-     parent.left = child
-    else:
-     parent.right = child
-
-    self.rebalance(stack)
-    
-
-  
-  # def rebalance(self, stack, key):
-  def rebalance(self, stack):
-     for node in stack:
-       node.height = self.update_height(node)
-
-     while stack:
-      node = stack.pop()
-      self.update_height(node)
-      balance = self.get_balance(node)
-
-      # if balance > 1 and key < node.left.key:
-      #   new_root = self.rotate_right(node)
-
-      # elif balance < -1 and key > node.right.key:
-      #   new_root = self.rotate_left(node)
-
-      # elif balance > 1 and key > node.left.key:
-      #   node.left = self.rotate_left(node.left)
-      #   new_root = self.rotate_right(node)
-
-      # elif balance < -1 and key < node.right.key:
-      #   node.right = self.rotate_right(node.right)
-      #   new_root = self.rotate_left(node.left)
-
-      if balance > 1:
-        if self.get_balance(node.left) >= 0:
-          new_root = self.rotate_right(node)
-        else:
-          node.left = self.rotate_left(node.left)
-          new_root = self.rotate_right(node)
-      elif balance < -1:
-        if self.get_balance(node.right) <= 0:
-          new_root = self.rotate_left(node)
-        else:
-          node.right = self.rotate_right(node.right)
-          new_root = self.rotate_left(node)
+    def print_q_table(self):
+        print("Learned Q-table:")
+        print(self.Q_table)
 
 
-      else:
-        continue
+# -------------------------
+# Run the Q-learning agent
+# -------------------------
 
-      if stack:
-        parent = stack[-1]
-        if parent.left == node:
-          parent.left = new_root
-        else:
-          parent.right = new_root
-
-      else:
-        self.root = new_root
-
-  def insert(self, key):
-    if not self.root:
-      self.root = Node(key)
-      return
-
-    stack = []
-    current = self.root
-
-    while True:
-      stack.append(current)
-      if key<current.key:
-        if current.left:
-          current = current.left
-        else:
-          current.left = Node(key)
-          stack.append(current.left)
-          break
-
-      else:
-        if current.right:
-          current = current.right
-        else:
-          current.right = Node(key)
-          stack.append(current.right)
-          break
-
-      # self.rebalance(stack, key)
-      self.rebalance(stack)
-    # while stack:
-    #   node = stack.pop()
-    #   self.update_height(node)
-    #   balance = self.get_balance(node)
-
-    #   if balance > 1 and key < node.left.key:
-    #     new_root = self.rotate_right(node)
-
-    #   elif balance < -1 and key > node.right.key:
-    #     new_root = self.rotate_left(node)
-
-    #   elif balance > 1 and key > node.left.key:
-    #     node.left = self.rotate_left(node.left)
-    #     new_root = self.rotate_right(node)
-
-    #   elif balance < -1 and key < node.right.key:
-    #     node.right = self.rotate_right(node.right)
-    #     new_root = self.rotate_left(node.left)
-
-    #   else:
-    #     continue
-
-    #   if stack:
-    #     parent = stack[-1]
-    #     if parent.left == node:
-    #       parent.left = new_root
-    #     else:
-    #       parent.right = new_root
-
-    #   else:
-    #     self.root = new_root
-
-
-
-tree = AVLTree()
-for x in [10, 20, 30, 40, 50, 25]:
-    tree.insert(x)
-
-tree.delete(50)
-print("Inorder:", tree.print_data())
+agent = QLearningGridworld()
+agent.train()
+agent.plot_q_values()
+agent.print_q_table()
