@@ -618,3 +618,13 @@ https://www.geeksforgeeks.org/machine-learning/gradient-descent-algorithm-and-it
 https://medium.com/@goldengrisha/a-beginners-guide-to-q-learning-understanding-with-a-simple-gridworld-example-2b6736e7e2c9
 -----------------------------------
 https://deeplizard.com/learn/video/mo96Nqlo1L8
+-----------------------------------------
+https://polynomialregression.drque.net/math.html
+----------------------
+
+import numpy as np
+
+linear_output = np.array([-2.5, 0.0, 3.7])
+np.sign(linear_output)
+array([-1.,  0.,  1.])
+----------------------------------

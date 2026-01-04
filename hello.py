@@ -1,27 +1,23 @@
-A = [[1,2],[4,5]] 
-B = [[7,8],[9,10]] 
-rows = len(A) 
-cols = len(A[0]) 
+mylist = [170, 45, 75, 90, 802, 24, 2, 66]
+print("Original array:", mylist)
+radixArray = [[], [], [], [], [], [], [], [], [], []]
+maxVal = max(mylist)
+exp = 1
 
-# Element wise addition 
-C = [[0 for i in range(cols)] for j in range(rows)] 
-for i in range(rows): 
-	for j in range(cols): 
-		C[i][j] = A[i][j] + B[i][j] 
-print("Addition of matrices: \n", C) 
+while maxVal // exp > 0:
 
-# Element wise subtraction 
-D = [[0 for i in range(cols)] for j in range(rows)] 
-for i in range(rows): 
-	for j in range(cols): 
-		D[i][j] = A[i][j] - B[i][j] 
-print("Subtraction of matrices: \n", D) 
+  while len(mylist) > 0:
+    val = mylist.pop()
+    radixIndex = (val // exp) % 10
+    radixArray[radixIndex].append(val)
 
-# Element wise division 
-E = [[0 for i in range(cols)] for j in range(rows)] 
-for i in range(rows): 
-	for j in range(cols): 
-		E[i][j] = A[i][j] / B[i][j] 
-print("Division of matrices: \n", E)
+  for bucket in radixArray:
+    while len(bucket) > 0:
+      val = bucket.pop()
+      mylist.append(val)
+
+  exp *= 10
+
+print(mylist)
 
 
