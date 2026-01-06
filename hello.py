@@ -1,23 +1,42 @@
-mylist = [170, 45, 75, 90, 802, 24, 2, 66]
-print("Original array:", mylist)
-radixArray = [[], [], [], [], [], [], [], [], [], []]
-maxVal = max(mylist)
-exp = 1
+import numpy as np
 
-while maxVal // exp > 0:
+class CustomStandardScaler:
+    def __init__(self):
+        self.mean_ = None
+        self.scale_ = None
 
-  while len(mylist) > 0:
-    val = mylist.pop()
-    radixIndex = (val // exp) % 10
-    radixArray[radixIndex].append(val)
+    def fit(self, X):
+        """Calculate the mean and standard deviation for each column."""
+        X = np.array(X)
+        self.mean_ = np.mean(X, axis=0)
+        # Using ddof=0 to match scikit-learn's default population std
+        self.scale_ = np.std(X, axis=0)
+        return self
 
-  for bucket in radixArray:
-    while len(bucket) > 0:
-      val = bucket.pop()
-      mylist.append(val)
+    def transform(self, X):
+        """Apply the scaling: (X - mean) / std."""
+        if self.mean_ is None or self.scale_ is None:
+            raise RuntimeError("Scaler must be fitted before transforming.")
+        
+        X = np.array(X)
+        # Prevent division by zero if std is 0
+        scale_adj = np.where(self.scale_ == 0, 1, self.scale_)
+        return (X - self.mean_) / scale_adj
 
-  exp *= 10
+    def fit_transform(self, X):
+        """Fit to data, then transform it."""
+        return self.fit(X).transform(X)
 
-print(mylist)
+# Example Usage
+if __name__ == "__main__":
+    data = np.array([[10, 2], [20, 4], [30, 6]])
+    
+    scaler = CustomStandardScaler()
+    scaled_data = scaler.fit_transform(data)
+    
+    print("Mean per column:", scaler.mean_)
+    print("Std per column:", scaler.scale_)
+    print("Scaled Data:\n", scaled_data)
+
 
 

@@ -6,3 +6,5 @@ Predictive Maintenance for IoT Devices: Use your knowledge of Random Forest or S
 Real-Time Customer Churn Prediction: Utilize Logistic Regression and Random Forest to identify customers likely to cancel a subscription. Focus on feature engineering, which is a core skill before moving to deep learning.
 
 Traffic Flow Prediction: Apply your Multiple Linear Regression and KNN skills to forecast city congestion levels. This project introduces you to time-series data, preparing you for sequence models in deep learning.
+
+Project 1 : SONAR Rock vs Mine Prediction with Python | End To End Python Machine Learning Project
