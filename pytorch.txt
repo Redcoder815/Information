@@ -1,16 +1,21 @@
-slice_tensor = tensor[:2, :]
-is tensor slicing — it extracts a subset of elements from tensor without copying the entire data (view-based operation in most cases).
+https://www.learnpytorch.io/00_pytorch_fundamentals/
+---------------------
+for data, target in dataloader:
+    optimizer.zero_grad()       # 1️⃣ Clear old gradients
+    output = model(data)        # 2️⃣ Forward pass
+    loss = loss_fn(output, target)  # 3️⃣ Compute loss
+    loss.backward()             # 4️⃣ Backpropagation (compute gradients)
+    optimizer.step()            # 5️⃣ Update parameters
+---------------------------------------
+from sklearn.datasets import make_blobs
 
-Breaking it down
-Assume tensor is 2D (like a matrix) with shape (rows, columns):
-
-:2 → row selection
-
-: means "start from the beginning"
-2 means "up to but not including index 2"
-So it selects rows with indices 0 and 1.
-: (second position) → column selection
-
-: alone means "take all columns".
----------------------------------------------
-ReLU(x)=max(0,x)
+X, y = make_blobs(
+    n_samples=100,        # Total number of points
+    n_features=2,         # Number of features (dimensions)
+    centers=3,            # Number of clusters or array of center coordinates
+    cluster_std=1.0,      # Standard deviation of clusters
+    center_box=(-10, 10), # Range for generating centers
+    shuffle=True,         # Shuffle samples
+    random_state=42       # Seed for reproducibility
+)
+-------------------------------------------
