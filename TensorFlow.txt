@@ -1,1 +1,18 @@
 https://dev.mrdbourke.com/tensorflow-deep-learning/
+-------------------------------
+tf.cast() in TensorFlow is used to convert (cast) a tensor from one data type to another.
+-------------------------
+The evaluate() method, typically used in Keras (which is built on TensorFlow), assesses the performance of your trained model on a given dataset. It calculates the loss and metrics that were specified during the model's compilation. For example, in the last executed cell C3ujgjDBvTRE, model_6.evaluate(X, y) is calculating the binary crossentropy loss and the accuracy of model_6 on the entire dataset X and y.
+-------------------------------
+In machine learning, especially when training neural networks with TensorFlow's model.fit(), epochs=100 means that the training process will iterate over the entire dataset 100 times. Each 'epoch' is one complete pass through all the training data. During each epoch, the model learns from the data, updates its internal parameters (weights and biases), and tries to minimize the loss function.
+---------------------------------
+
+itertools is a Python module that provides a set of fast, memory-efficient tools for working with iterators. These tools are commonly used to create complex iterators from simpler ones, and they are especially useful for tasks involving combinations, permutations, and various kinds of looping. For example, in the last executed cell BRqWi-gXUKMO, itertools.product was used to get the Cartesian product of the input iterables, essentially creating all possible pairs from the ranges, which is useful for iterating through elements in a 2D matrix like a confusion matrix.
+
+---------------------------------------
+In the model.fit() function, validation_data=(test_data, test_labels) is used to provide a separate dataset that the model will evaluate at the end of each epoch. This is crucial for monitoring the model's performance on unseen data during training, helping you to:
+
+Monitor for overfitting: If the model's performance on the training data continues to improve but its performance on the validation data starts to get worse, it's a sign of overfitting.
+Hyperparameter tuning: It helps in making informed decisions about adjusting hyperparameters (like the number of epochs or learning rate) to find the best-performing model.
+In this case, test_data and test_labels are being used as the validation set.
+----------------------------
