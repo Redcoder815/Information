@@ -1,0 +1,1 @@
+pip install --upgrade d2l==1.0.0a0

@@ -1,0 +1,12 @@
+Linked list single and double
+Stack and Queues
+Hash tables
+Trees and Heaps
+Graphs
+
+Algorithms:
+Sorting and searching: Linear and binary search, Merge sort, quick sort
+Graphs traversal: breath first search and depth first search
+Recursion
+Dynamic programming
+Greedy Algorithms
