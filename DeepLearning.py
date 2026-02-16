@@ -1,30 +1,21 @@
-import torch
-from torch import nn
-class LinearRegressionModel(nn.Module):
-  def __init__(self):
-    super().__init__()
-    self.weight = nn.Parameter(data=torch.randn(1, 
-                                              requires_grad=True,
-                                              dtype=torch.float
-                                              ))
-    
-    self.bias = nn.Parameter(data=torch.randn(1, 
-                                              requires_grad=True,
-                                              dtype=torch.float
-                                              ))
+def partition(array, low, high):
+    pivot = array[high]
+    i = low - 1
+    for j in range(low, high):
+        if array[j]<= pivot:
+            i = i + 1
+            array[i], array[j] = array[j], array[i]
+    array[i+1], array[high] = array[high], array[i+1]
+    return i + 1
 
-  def forward(self, x):
-    return self.weight * x + self.bias
+def quickSort(array, low, high):
+    if low < high:
+        partiton_point = partition(array, low, high)
 
-# ## Option 2
-# class LinearRegressionModel(nn.Module):
-#   def __init__(self):
-#     super().__init__()
-#     self.linear_layer = nn.Linear(in_features = 1,
-#                                   out_features = 1)
-#   def forward(self,x : torch.Tensor) -> torch.Tensor:
-#     return self.linear_layer(x)
-  
-torch.manual_seed(42)
-model_1 = LinearRegressionModel()
-model_1,model_1.state_dict()
+        quickSort(array, low, partiton_point - 1)
+        quickSort(array, partiton_point + 1, high)
+
+array = [9, 5, 1, 4]
+size = len(array)
+quickSort(array, 0, size - 1)
+print(array)

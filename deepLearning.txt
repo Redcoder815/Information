@@ -150,3 +150,58 @@ print(result)
  [1. 4. 5.]
  [1. 6. 7.]]
 -------------------------
+import numpy as np
+
+Y = np.array([[1, 2, 3],
+              [4, 5, 6]])
+
+print("Original shape:", Y.shape)  # (2, 3)
+
+Y = Y.reshape((-1,))
+print("New shape:", Y.shape)       # (6,)
+print("Flattened array:", Y)       # [1 2 3 4 5 6]
+---------------------------------------------
+
+mean = X.mean(dim=(0, 2, 3), keepdim=True)
+import torch
+
+# Shape: (batch=2, channels=2, height=2, width=2)
+X = torch.tensor([
+    [  # Image 1
+        [[1., 2.], [3., 4.]],   # Channel 1
+        [[5., 6.], [7., 8.]]    # Channel 2
+    ],
+    [  # Image 2
+        [[9., 10.], [11., 12.]], # Channel 1
+        [[13., 14.], [15., 16.]] # Channel 2
+    ]
+])
+
+print("X shape:", X.shape)
+mean = X.mean(dim=(0, 2, 3), keepdim=True)
+print("Mean shape:", mean.shape)
+print("Mean values:\n", mean)
+
+Step 3 — How it works
+dim=(0, 2, 3) means:
+0 → average over both images
+2 → average over height
+3 → average over width
+We do not average over dim=1 (channels), so each channel gets its own mean.
+
+
+Image 1: 1, 2, 3, 4
+Image 2: 9, 10, 11, 12
+Sum = 1+2+3+4+9+10+11+12 = 52
+Count = 8
+Mean = 52 / 8 = 6.5
+
+Image 1: 5, 6, 7, 8
+Image 2: 13, 14, 15, 16
+Sum = 5+6+7+8+13+14+15+16 = 104
+Count = 8
+Mean = 104 / 8 = 13.0
+Mean shape: torch.Size([1, 2, 1, 1])
+Mean values:
+tensor([[[[ 6.5000]],
+         [[13.0000]]]])
