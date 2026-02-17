@@ -205,3 +205,33 @@ Mean shape: torch.Size([1, 2, 1, 1])
 Mean values:
 tensor([[[[ 6.5000]],
          [[13.0000]]]])
+-----------------------------
+
+import torch
+
+# Two tensors with same number of rows but different number of columns
+X = torch.tensor([[1, 2], [3, 4]])
+Y = torch.tensor([[5, 6, 7], [8, 9, 10]])
+
+# Concatenate along columns (dim=1)
+Z = torch.cat((X, Y), dim=1)
+
+print(Z)
+tensor([[ 1,  2,  5,  6,  7],
+        [ 3,  4,  8,  9, 10]])
+-------------------------
+import torch
+
+# Two tensors with same number of columns but different number of rows
+X = torch.tensor([[1, 2], [3, 4]])
+Y = torch.tensor([[5, 6], [7, 8]])
+
+# Concatenate along rows (dim=0)
+Z = torch.cat((X, Y), dim=0)
+
+print(Z)
+tensor([[1, 2],
+        [3, 4],
+        [5, 6],
+        [7, 8]])
+--------------------------
